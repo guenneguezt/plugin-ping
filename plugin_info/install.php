@@ -60,4 +60,3 @@ function ping_remove() {
 		$cron->remove();
 	}
 }
-?>

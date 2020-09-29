@@ -130,7 +130,7 @@ class ping extends eqLogic {
 			$cmd->setName('Ping');
 			$cmd->setEqLogic_id($this->getId());
 			$cmd->setType('action');
-			$cmd->setSubType('other');
+			$cmd->setSubType('string');
 			$cmd->setLogicalId('ping');
 			$cmd->setEventOnly(1);
 			$cmd->setDisplay('icon','<i class="icon techno-fleches"></i>');
@@ -145,6 +145,21 @@ class ping extends eqLogic {
 				$cmd->setDisplay('generic_type','GENERIC_ACTION');
 				$cmd->save();
 			}
+		}
+        
+       		$cmd = $this->getCmd(null, 'info');
+		if ( ! is_object($cmd) ) {
+			$cmd = new pingCmd();
+			$cmd->setName('Info');
+			$cmd->setEqLogic_id($this->getId());
+			$cmd->setLogicalId('info');
+			$cmd->setType('info');
+			$cmd->setSubType('string');
+			$cmd->setIsHistorized(0);
+			$cmd->setEventOnly(1);
+            $cmd->setDisplay('icon','<i class="icon jeedomapp-information"></i>');
+			$cmd->setDisplay('generic_type','GENERIC_INFO');
+			$cmd->save();
 		}
 	}
 
@@ -203,6 +218,20 @@ class ping extends eqLogic {
 			$cmd->setDisplay('generic_type','GENERIC_INFO');
 			$cmd->save();		
 		}
+      		$cmd = $this->getCmd(null, 'info');
+		if ( ! is_object($cmd) ) {
+			$cmd = new pingCmd();
+			$cmd->setName('Info');
+			$cmd->setEqLogic_id($this->getId());
+			$cmd->setLogicalId('info');
+			$cmd->setType('info');
+			$cmd->setSubType('string');
+			$cmd->setIsHistorized(0);
+			$cmd->setEventOnly(1);
+           	$cmd->setDisplay('icon','<i class="icon jeedomapp-information"></i>');
+			$cmd->setDisplay('generic_type','GENERIC_INFO');
+			$cmd->save();
+		}
 	}
 
 	public function ping() {
@@ -210,7 +239,8 @@ class ping extends eqLogic {
 			log::add('ping','debug','Test '.$this->getHumanName());
 			$statuscmd = $this->getCmd(null, 'state');
 			$delaicmd = $this->getCmd(null, 'delai');
-			
+          	$infocmd = $this->getCmd(null, 'info');
+          
 			log::add('ping','debug','mode : '.$this->getConfiguration('mode'));
 			switch ($this->getConfiguration('mode')) {
 				case "Tcp":
@@ -289,30 +319,35 @@ class ping extends eqLogic {
 				case "Arp":
 					log::add('ping','debug','Search '.$this->getConfiguration('mac'));
 					$cmd = config::byKey('cmd_arp', 'ping');
-					$cmd .= " -l -g --retry=5 -t 800";
+					$cmd .= " -q -l -g --retry=4 -t 800";
 					if ( $this->getConfiguration('interface') != "" )
 					{
 						$cmd .= ' -I '.$this->getConfiguration('interface');
 					}
-					$cmd .= ' -T '.$this->getConfiguration('mac').' 2>&1';
+					$cmd .= ' -T '.strtolower($this->getConfiguration('mac')).' 2>/dev/null | grep "'.strtolower($this->getConfiguration('mac')).'" | awk -F \'\t\' \'{ print $1 }\''; 
 					log::add('ping','debug',$cmd);
 					$lastligne = exec($cmd, $return, $code);
 					log::add('ping','debug','Retour commande '.join("\n", $return));
-					if ( preg_match("/\t".strtolower($this->getConfiguration('mac'))."\t/", strtolower(join("\n", $return))) )
+					if (empty($return))
 					{
-						log::add('ping','debug','Ok');
-						if ($statuscmd->execCmd() != 1) {
-							$statuscmd->setCollectDate('');
-							$statuscmd->event(1);
-						}
-					} else {
 						log::add('ping','debug','Ko');
 						if ($statuscmd->execCmd() != 0) {
 							$statuscmd->setCollectDate('');
 							$statuscmd->event(0);
+	                      	$infocmd->event('!'.$infocmd->execCmd().'!');
+						}
+					} else {
+   						$infocmd->setCollectDate('');
+						log::add('ping','debug','Ok');
+						$infocmd->event(''.join("", $return));
+						if ($statuscmd->execCmd() != 1) {
+							$statuscmd->setCollectDate('');
+							$statuscmd->event(1);
 						}
 					}
-					break;
+
+			
+                    break;
 			}
 		}
 	}
@@ -334,7 +369,7 @@ class ping extends eqLogic {
     }
 
     public static function GetArpCmd() {
-		foreach(array('sudo /usr/bin/arp-scan') as $cmd)
+		foreach(array('sudo /usr/sbin/arp-scan') as $cmd)
 		{
 			log::add('ping','debug','Essai la commande pour arp :'.$cmd);
 			unset($return);

@@ -18,7 +18,7 @@
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 include_file('core', 'authentification', 'php');
 if (!isConnect('admin')) {
-	throw new Exception('{{401 - Accès non autorisé}}');
+    throw new Exception('{{401 - Accès non autorisé}}');
 }
 ?>
 
@@ -26,24 +26,22 @@ if (!isConnect('admin')) {
     <div class="form-group">
         <label class="col-lg-4 control-label">{{Commande ping}}</label>
         <div class="col-lg-3">
-            <input class="configKey form-control" data-l1key="cmd_ping" disabled/>
+            <input class="configKey form-control" data-l1key="cmd_ping" disabled />
         </div>
     </div>
     <div class="form-group">
         <label class="col-lg-4 control-label">{{Commande arp-scan}}</label>
         <div class="col-lg-3">
-            <input class="configKey form-control" data-l1key="cmd_arp" disabled/>
+            <input class="configKey form-control" data-l1key="cmd_arp" disabled />
         </div>
     </div>
-	<div id='div_DetectBin' style="display: none;"></div>
+    <div id='div_DetectBin' style="display: none;"></div>
     <div class="form-group">
-		<div class="col-lg-4">
-		</div>
-		<div class="col-lg-3">
-			<a class="btn btn-warning" id="bt_DetectBin" style="color : white;"><i class="fa fa-wrench"></i> {{Detecter les programme ping et arp-scan}}</a>
-		</div>
+        <div class="col-lg-4">
+        </div>
+        <div class="col-lg-3">
+            <a class="btn btn-warning" id="bt_DetectBin" style="color : white;"><i class="fa fa-wrench"></i> {{Detecter les programme ping et arp-scan}}</a>
+        </div>
     </div>
 </form>
 <?php include_file('desktop', 'ping', 'js', 'ping'); ?>
-
-
