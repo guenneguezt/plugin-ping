@@ -130,7 +130,7 @@ class ping extends eqLogic {
 			$cmd->setName('Ping');
 			$cmd->setEqLogic_id($this->getId());
 			$cmd->setType('action');
-			$cmd->setSubType('string');
+			$cmd->setSubType('other');
 			$cmd->setLogicalId('ping');
 			$cmd->setEventOnly(1);
 			$cmd->setDisplay('icon','<i class="icon techno-fleches"></i>');
