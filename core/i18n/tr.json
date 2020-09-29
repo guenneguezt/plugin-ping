@@ -40,6 +40,6 @@
     "plugins\/ping\/plugin_info\/configuration.php": {
         "Commande ping": "Commande ping",
         "Commande arp-scan": "Commande arp-scan",
-        "Detecter les programme ping et arp-scan": "Detecter les programme ping et arp-scan"
+        "Detecter les programme ping et arp-scan": "Detecter les programmes ping et arp-scan"
     }
 }
